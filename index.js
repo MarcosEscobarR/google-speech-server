@@ -31,6 +31,7 @@ const io = new Server(server, {
 const speechClient = new speech.SpeechClient();
 
 io.on("connection", (socket) => {
+  console.log("a user connected");
   let recognizeStream = null;
   console.log("** a user connected - " + socket.id + " **\n");
 
