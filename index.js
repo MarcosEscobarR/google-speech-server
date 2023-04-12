@@ -105,8 +105,8 @@ io.on("connection", (socket) => {
   }
 });
 
-server.listen(8081, () => {
-  console.log("WebSocket server listening on port 8081.");
+server.listen(80, () => {
+  console.log("WebSocket server listening on port 80.");
 });
 
 // =========================== GOOGLE CLOUD SETTINGS ================================ //
