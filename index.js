@@ -29,8 +29,9 @@ const io = new Server(server, {
 //TODO: run in terminal first to setup credentials export GOOGLE_APPLICATION_CREDENTIALS="./speech-to-text-key.json"
 
 const speechClient = new speech.SpeechClient();
-
+const port = process.env.PORT || 8080;
 io.on("connection", (socket) => {
+  console.log("a user connected");
   let recognizeStream = null;
   console.log("** a user connected - " + socket.id + " **\n");
 
@@ -104,8 +105,8 @@ io.on("connection", (socket) => {
   }
 });
 
-server.listen(8081, () => {
-  console.log("WebSocket server listening on port 8081.");
+server.listen(port, () => {
+  console.log("WebSocket server listening on port: ", port);
 });
 
 // =========================== GOOGLE CLOUD SETTINGS ================================ //
