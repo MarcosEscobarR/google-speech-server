@@ -29,7 +29,7 @@ const io = new Server(server, {
 //TODO: run in terminal first to setup credentials export GOOGLE_APPLICATION_CREDENTIALS="./speech-to-text-key.json"
 
 const speechClient = new speech.SpeechClient();
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 8081;
 io.on("connection", (socket) => {
   console.log("a user connected");
   let recognizeStream = null;
@@ -37,6 +37,7 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     console.log("** user disconnected ** \n");
+    stopRecognitionStream();
   });
 
   socket.on("send_message", (message) => {
