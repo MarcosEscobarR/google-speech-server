@@ -1,6 +1,9 @@
 const express = require("express");
 const speech = require("@google-cloud/speech");
-
+const jwt = require("jsonwebtoken");
+const {
+  jwt: { algorithm, public, private, issuer, audience },
+} = require("./config/variables");
 //use logger
 
 //use body parser
@@ -26,14 +29,18 @@ const io = new Server(server, {
   },
 });
 
-//TODO: run in terminal first to setup credentials export GOOGLE_APPLICATION_CREDENTIALS="./speech-to-text-key.json"
-
 const speechClient = new speech.SpeechClient();
 const port = process.env.PORT || 8081;
+
 io.on("connection", (socket) => {
   console.log("a user connected");
   let recognizeStream = null;
   console.log("** a user connected - " + socket.id + " **\n");
+
+  socket.use((packet, next) => {
+    console.log("packet: " + packet);
+    next();
+  });
 
   socket.on("disconnect", () => {
     console.log("** user disconnected ** \n");
