@@ -56,11 +56,6 @@ io.on("connection", (socket) => {
   let recognizeStream = null;
   console.log("** a user connected - " + socket.id + " **\n");
 
-  socket.use((packet, next) => {
-    console.log("packet: " + packet);
-    next();
-  });
-
   socket.on("disconnect", () => {
     console.log("** user disconnected ** \n");
     stopRecognitionStream();
@@ -90,9 +85,11 @@ io.on("connection", (socket) => {
       try {
         recognizeStream.write(audioData.audio);
       } catch (err) {
+        stopRecognitionStream();
         console.log("Error calling google api " + err);
       }
     } else {
+      io.emit("receive_message", "RecognizeStream is null");
       console.log("RecognizeStream is null");
     }
   });
@@ -119,7 +116,9 @@ io.on("connection", (socket) => {
           });
         });
     } catch (err) {
+      io.emit("receive_message", "RecognizeStream is null");
       console.error("Error streaming google api " + err);
+      stopRecognitionStream();
     }
   }
 
