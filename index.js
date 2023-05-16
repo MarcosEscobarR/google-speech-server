@@ -32,24 +32,24 @@ const io = new Server(server, {
 const speechClient = new speech.SpeechClient();
 const port = process.env.PORT || 8081;
 
-io.use((socket, next) => {
-  console.log("socket.handshake.query: ", socket.handshake.auth);
-  if (socket.handshake.auth && socket.handshake.auth.token) {
-    jwt.verify(
-      socket.handshake.auth.token,
-      public,
-      { algorithms: [algorithm] },
-      (err, decoded) => {
-        if (err) return next(new Error("Authentication error"));
-        console.log({ decoded });
-        socket.decoded = decoded;
-        next();
-      }
-    );
-  } else {
-    next(new Error("Authentication error"));
-  }
-});
+// io.use((socket, next) => {
+//   console.log("socket.handshake.query: ", socket.handshake.auth);
+//   if (socket.handshake.auth && socket.handshake.auth.token) {
+//     jwt.verify(
+//       socket.handshake.auth.token,
+//       public,
+//       { algorithms: [algorithm] },
+//       (err, decoded) => {
+//         if (err) return next(new Error("Authentication error"));
+//         console.log({ decoded });
+//         socket.decoded = decoded;
+//         next();
+//       }
+//     );
+//   } else {
+//     next(new Error("Authentication error"));
+//   }
+// });
 
 io.on("connection", (socket) => {
   console.log("a user connected");
