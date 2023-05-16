@@ -1,6 +1,9 @@
 const express = require("express");
 const speech = require("@google-cloud/speech");
-
+const jwt = require("jsonwebtoken");
+const {
+  jwt: { algorithm, public, private, issuer, audience },
+} = require("./config/variables");
 //use logger
 
 //use body parser
@@ -26,10 +29,28 @@ const io = new Server(server, {
   },
 });
 
-//TODO: run in terminal first to setup credentials export GOOGLE_APPLICATION_CREDENTIALS="./speech-to-text-key.json"
-
 const speechClient = new speech.SpeechClient();
 const port = process.env.PORT || 8081;
+
+// io.use((socket, next) => {
+//   console.log("socket.handshake.query: ", socket.handshake.auth);
+//   if (socket.handshake.auth && socket.handshake.auth.token) {
+//     jwt.verify(
+//       socket.handshake.auth.token,
+//       public,
+//       { algorithms: [algorithm] },
+//       (err, decoded) => {
+//         if (err) return next(new Error("Authentication error"));
+//         console.log({ decoded });
+//         socket.decoded = decoded;
+//         next();
+//       }
+//     );
+//   } else {
+//     next(new Error("Authentication error"));
+//   }
+// });
+
 io.on("connection", (socket) => {
   console.log("a user connected");
   let recognizeStream = null;
@@ -64,9 +85,11 @@ io.on("connection", (socket) => {
       try {
         recognizeStream.write(audioData.audio);
       } catch (err) {
+        stopRecognitionStream();
         console.log("Error calling google api " + err);
       }
     } else {
+      io.emit("receive_message", "RecognizeStream is null");
       console.log("RecognizeStream is null");
     }
   });
@@ -93,7 +116,9 @@ io.on("connection", (socket) => {
           });
         });
     } catch (err) {
+      io.emit("receive_message", "RecognizeStream is null");
       console.error("Error streaming google api " + err);
+      stopRecognitionStream();
     }
   }
 
